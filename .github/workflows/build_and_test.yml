@@ -17,6 +17,17 @@ jobs:
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
 
+      - name: List available simulators  
+        run: |
+          echo "=== Available Simulators ==="
+          xcrun simctl list devices available
+          echo ""
+          echo "=== Available Device Types ==="
+          xcrun simctl list devicetypes
+          echo ""
+          echo "=== Available Runtimes ==="
+          xcrun simctl list runtimes
+
     #   - name: Install and Run SwiftLint
     #     run: |
     #       brew install swiftlint
