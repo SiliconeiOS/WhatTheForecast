@@ -1,0 +1,35 @@
+name: WhatTheForecast Build & Test
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app/Contents/Developer
+
+      - name: Install and Run SwiftLint
+        run: |
+          brew install swiftlint
+          swiftlint --strict --reporter "github-actions-logging"
+
+      - name: Install xcpretty
+        run: gem install xcpretty
+
+      - name: Build and run tests
+        run: |
+          set -o pipefail && xcodebuild \
+            -workspace WhatTheForecast.xcodeproj/project.xcworkspace \
+            -scheme WhatTheForecast \
+            -sdk iphonesimulator \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            test | xcpretty
