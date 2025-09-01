@@ -42,5 +42,5 @@ jobs:
             -workspace WhatTheForecast.xcodeproj/project.xcworkspace \
             -scheme WhatTheForecast \
             -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 16 Pro' \
+            -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
             test | xcpretty
