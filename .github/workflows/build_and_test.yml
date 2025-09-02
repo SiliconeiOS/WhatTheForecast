@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  # --- Задание для Unit-тестов (супербыстрое, без симулятора) ---
+  # --- Задание для Unit-тестов ---
   unit-test:
     runs-on: macos-14
     
@@ -31,19 +31,18 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty
       
-      # Запускаем тесты в режиме "Designed for iPad", который использует iOS SDK на macOS без медленной загрузки симулятора.
       - name: Build and Run Unit Tests on Mac
         run: |
           set -o pipefail && xcodebuild \
             test \
             -workspace WhatTheForecast.xcodeproj/project.xcworkspace \
-            -scheme WhatTheForecast \
+            -scheme WhatTheForecast_UnitTests \
             -destination 'platform=macOS,variant=Designed for iPad' \
-            -only-testing:WhatTheForecastTests \
             -skipPackagePluginValidation | xcpretty
 
-  # --- Задание для UI-тестов (на симуляторе, выполняется параллельно) ---
+  # --- Задание для UI-тестов ---
   ui-test:
+    # ... (эта часть остается без изменений) ...
     runs-on: macos-14
     
     steps:
@@ -66,14 +65,12 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty
       
-      # UI-тестам по-прежнему нужен полноценный симулятор.
       - name: Find Simulator UDID
         id: simulator
         run: |
           UDID=$(xcrun simctl list devices 'iPhone 16 Pro' --json | jq -r '.devices | .[] | .[] | select(.isAvailable == true and .state == "Shutdown") | .udid' | head -n 1)
           echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
 
-      # Используем стабильный двухшаговый подход для запуска тестов на симуляторе.
       - name: Build for testing (UI Tests)
         run: |
           set -o pipefail && xcodebuild \
