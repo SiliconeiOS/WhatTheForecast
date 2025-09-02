@@ -18,9 +18,6 @@ jobs:
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode_16.1.app/Contents/Developer
 
-      # --- ШАГ 1: Кэширование ---
-      # Кэшируем DerivedData и SPM, чтобы ускорить сборку.
-      # Ключ кэша зависит от хэша файла Package.resolved, чтобы кэш сбрасывался при изменении зависимостей.
       - name: Cache Xcode build products
         uses: actions/cache@v4
         with:
@@ -34,24 +31,30 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty
 
-      # --- ШАГ 2: Динамический поиск симулятора ---
-      - name: Find iPhone 16 Pro Simulator UDID
+      - name: Find Simulator UDID
         id: simulator
         run: |
           UDID=$(xcrun simctl list devices 'iPhone 16 Pro' --json | jq -r '.devices | .[] | .[] | select(.isAvailable == true and .state == "Shutdown") | .udid' | head -n 1)
           echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
-          echo "Found simulator UDID: $UDID"
       
-      # --- ШАГ 3: Запуск только Unit-тестов ---
-      - name: Build and Run Unit Tests
+      # --- Используем стабильный двухшаговый подход ---
+      - name: Build for testing (Unit Tests)
         run: |
           set -o pipefail && xcodebuild \
-            test \
+            build-for-testing \
             -workspace WhatTheForecast.xcodeproj/project.xcworkspace \
             -scheme WhatTheForecast \
             -destination "id=${{ env.SIMULATOR_UDID }}" \
             -only-testing:WhatTheForecastTests \
             -skipPackagePluginValidation | xcpretty
+
+      - name: Run Unit Tests
+        run: |
+          XCTESTRUN_FILE=$(find ~/Library/Developer/Xcode/DerivedData -name '*.xctestrun' | head -n 1)
+          set -o pipefail && xcodebuild \
+            test-without-building \
+            -xctestrun "$XCTESTRUN_FILE" \
+            -destination "id=${{ env.SIMULATOR_UDID }}" | xcpretty
 
   # --- Задание для UI-тестов (медленное, выполняется параллельно) ---
   ui-test:
@@ -77,20 +80,27 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty
       
-      - name: Find iPhone 16 Pro Simulator UDID
+      - name: Find Simulator UDID
         id: simulator
         run: |
           UDID=$(xcrun simctl list devices 'iPhone 16 Pro' --json | jq -r '.devices | .[] | .[] | select(.isAvailable == true and .state == "Shutdown") | .udid' | head -n 1)
           echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
-          echo "Found simulator UDID: $UDID"
 
-      # --- Запуск только UI-тестов ---
-      - name: Build and Run UI Tests
+      # --- Используем стабильный двухшаговый подход и здесь ---
+      - name: Build for testing (UI Tests)
         run: |
           set -o pipefail && xcodebuild \
-            test \
+            build-for-testing \
             -workspace WhatTheForecast.xcodeproj/project.xcworkspace \
             -scheme WhatTheForecast \
             -destination "id=${{ env.SIMULATOR_UDID }}" \
             -only-testing:WhatTheForecastUITests \
             -skipPackagePluginValidation | xcpretty
+
+      - name: Run UI Tests
+        run: |
+          XCTESTRUN_FILE=$(find ~/Library/Developer/Xcode/DerivedData -name '*.xctestrun' | head -n 1)
+          set -o pipefail && xcodebuild \
+            test-without-building \
+            -xctestrun "$XCTESTRUN_FILE" \
+            -destination "id=${{ env.SIMULATOR_UDID }}" | xcpretty
