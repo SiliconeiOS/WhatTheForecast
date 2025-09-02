@@ -9,10 +9,23 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>WhatTheForecast_UnitTests.xcscheme_^#shared#^_</key>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>6B4C92F42E632D5A00551D09</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>0</integer>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6B4C930A2E632D5B00551D09</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6B4C93142E632D5B00551D09</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
