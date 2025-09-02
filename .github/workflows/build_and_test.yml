@@ -31,12 +31,21 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty
 
-      - name: Build and run tests
+      - name: Build for testing
         run: |
           set -o pipefail && xcodebuild \
+            build-for-testing \
             -workspace WhatTheForecast.xcodeproj/project.xcworkspace \
             -scheme WhatTheForecast \
-            -sdk iphonesimulator \
             -destination 'id=86E5E9E0-DB93-4EA2-8A61-F5EEA12BE23D' \
-            -skipPackagePluginValidation
-            test | xcpretty
+            -skipPackagePluginValidation | xcpretty
+
+      - name: Run tests
+        run: |
+          XCTESTRUN_FILE=$(find ~/Library/Developer/Xcode/DerivedData -name '*.xctestrun' | head -n 1)
+          echo "Found xctestrun file: $XCTESTRUN_FILE"
+              
+          set -o pipefail && xcodebuild \
+          test-without-building \
+          -xctestrun "$XCTESTRUN_FILE" \
+          -destination 'id=86E5E9E0-DB93-4EA2-8A61-F5EEA12BE23D' | xcpretty
