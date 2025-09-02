@@ -38,4 +38,5 @@ jobs:
             -scheme WhatTheForecast \
             -sdk iphonesimulator \
             -destination 'platform=iOS Simulator,name=iPhone 16 Pro,OS=18.2' \
+            -skipPackagePluginValidation
             test | xcpretty
