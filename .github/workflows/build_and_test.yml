@@ -28,11 +28,6 @@ jobs:
           echo "=== Available Runtimes ==="
           xcrun simctl list runtimes
 
-    #   - name: Install and Run SwiftLint
-    #     run: |
-    #       brew install swiftlint
-    #       swiftlint --strict --reporter "github-actions-logging"
-
       - name: Install xcpretty
         run: gem install xcpretty
 
