@@ -192,7 +192,6 @@
 					};
 					6B4C930A2E632D5B00551D09 = {
 						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 6B4C92F42E632D5A00551D09;
 					};
 					6B4C93142E632D5B00551D09 = {
 						CreatedOnToolsVersion = 16.4;
@@ -472,7 +471,6 @@
 		6B4C93242E632D5B00551D09 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8682J7XR9D;
@@ -484,14 +482,12 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhatTheForecast.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WhatTheForecast";
 			};
 			name = Debug;
 		};
 		6B4C93252E632D5B00551D09 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8682J7XR9D;
@@ -503,7 +499,6 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhatTheForecast.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WhatTheForecast";
 			};
 			name = Release;
 		};
