@@ -57,11 +57,10 @@ jobs:
             -destination "id=${{ env.SIMULATOR_UDID }}" \
             -only-testing:WhatTheForecastTests | xcpretty
 
-      # --- ВОТ ИСПРАВЛЕНИЕ ---
-      - name: Reset Simulator
+      - name: Erase Simulator
         run: |
-          echo "Shutting down simulator to ensure a clean state for UI tests..."
-          xcrun simctl shutdown ${{ env.SIMULATOR_UDID }}
+          echo "Erasing simulator to ensure a clean state for UI tests..."
+          xcrun simctl erase ${{ env.SIMULATOR_UDID }}
           
       - name: Run UI Tests
         run: |
