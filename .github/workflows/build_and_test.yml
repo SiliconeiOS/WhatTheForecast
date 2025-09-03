@@ -36,7 +36,6 @@ jobs:
           UDID=$(xcrun simctl list devices 'iPhone 16 Pro' --json | jq -r '.devices | .[] | .[] | select(.isAvailable == true and .state == "Shutdown") | .udid' | head -n 1)
           echo "SIMULATOR_UDID=$UDID" >> "$GITHUB_ENV"
       
-      # --- ШАГ 1: Собираем ВСЕ тесты ОДИН РАЗ ---
       - name: Build for testing (All Tests)
         id: build
         run: |
@@ -47,11 +46,9 @@ jobs:
             -destination "id=${{ env.SIMULATOR_UDID }}" \
             -skipPackagePluginValidation | xcpretty
           
-          # Находим путь к созданному xctestrun файлу и передаем его в следующие шаги
           XCTESTRUN_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name '*.xctestrun' | head -n 1)
           echo "xctestrun_path=$XCTESTRUN_PATH" >> "$GITHUB_OUTPUT"
 
-      # --- ШАГ 2: Запускаем только Unit-тесты из готового билда ---
       - name: Run Unit Tests
         run: |
           set -o pipefail && xcodebuild \
@@ -60,7 +57,12 @@ jobs:
             -destination "id=${{ env.SIMULATOR_UDID }}" \
             -only-testing:WhatTheForecastTests | xcpretty
 
-      # --- ШАГ 3: Запускаем только UI-тесты из того же самого билда ---
+      # --- ВОТ ИСПРАВЛЕНИЕ ---
+      - name: Reset Simulator
+        run: |
+          echo "Shutting down simulator to ensure a clean state for UI tests..."
+          xcrun simctl shutdown ${{ env.SIMULATOR_UDID }}
+          
       - name: Run UI Tests
         run: |
           set -o pipefail && xcodebuild \
